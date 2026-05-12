@@ -136,6 +136,52 @@ func hapusSupplier(A *TabSupplier, n *int) {
 	}
 }
 
+
+// Fungsi Sequential Search (Mencari berdasarkan Lokasi)
+func cariBerdasarkanLokasi(A TabSupplier, n int, targetLokasi string) {
+	var i int
+	var ditemukan bool = false
+
+	for i = 0; i < n; i++ {
+		if A[i].Lokasi == targetLokasi {
+			fmt.Println("\nData ditemukan:")
+			fmt.Println("Nama Perusahaan :", A[i].NamaPerusahaan)
+			fmt.Println("Lokasi          :", A[i].Lokasi)
+			fmt.Println("Rating          :", A[i].RatingPerforma)
+			
+			ditemukan = true
+		}
+	}
+
+	if !ditemukan {
+		fmt.Printf("\nSupplier dengan lokasi '%s' tidak ditemukan\n", targetLokasi)
+	}
+}
+
+// Fungsi Binary Search (Mencari berdasarkan Nama Perusahaan)
+func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
+	// PENTING: Panggil fungsi sorting milik Anggota 3 di sini!
+	// urutkanBerdasarkanNama(A, n) 
+
+	var left int = 0
+	var right int = n - 1
+	var mid int
+
+	for left <= right {
+		mid = (left + right) / 2
+
+		if A[mid].NamaPerusahaan == targetNama {
+			return mid
+		} else if A[mid].NamaPerusahaan < targetNama {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+
+	return -1
+}
+
 func main() {
 	var dataMitra TabSupplier
 	var nData int = 0
