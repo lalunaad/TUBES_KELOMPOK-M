@@ -1,0 +1,193 @@
+package main
+
+import "fmt"
+
+const NMAX int = 100
+const MAX_RIWAYAT int = 50
+
+type Kontak struct {
+	Telepon string
+	Email   string
+}
+
+type Riwayat struct {
+	Tanggal   string
+	Deskripsi string
+}
+
+type Supplier struct {
+	NamaPerusahaan string
+	Lokasi         string
+	JenisMaterial  string
+	RatingPerforma float64
+	DetailKontak   Kontak
+	RiwayatLayanan [MAX_RIWAYAT]Riwayat
+	JumRiwayat     int
+}
+
+type TabSupplier [NMAX]Supplier
+
+func tambahSupplier(A *TabSupplier, n *int) {
+	if *n < NMAX {
+		fmt.Print("Nama Perusahaan : ")
+		fmt.Scan(&A[*n].NamaPerusahaan)
+		fmt.Print("Lokasi          : ")
+		fmt.Scan(&A[*n].Lokasi)
+		fmt.Print("Jenis Material  : ")
+		fmt.Scan(&A[*n].JenisMaterial)
+		fmt.Print("Rating Performa : ")
+		fmt.Scan(&A[*n].RatingPerforma)
+		fmt.Print("No Telepon      : ")
+		fmt.Scan(&A[*n].DetailKontak.Telepon)
+		fmt.Print("Email           : ")
+		fmt.Scan(&A[*n].DetailKontak.Email)
+		A[*n].JumRiwayat = 0
+		*n = *n + 1
+		fmt.Println("Data berhasil ditambahkan!")
+	} else {
+		fmt.Println("Kapasitas penyimpanan penuh!")
+	}
+}
+
+func tampilSemuaSupplier(A TabSupplier, n int) {
+	if n == 0 {
+		fmt.Println("Data supplier masih kosong.")
+	} else {
+		for i := 0; i < n; i++ {
+			fmt.Printf("\n--- Supplier %d ---\n", i+1)
+			fmt.Printf("Nama Perusahaan : %s\n", A[i].NamaPerusahaan)
+			fmt.Printf("Lokasi          : %s\n", A[i].Lokasi)
+			fmt.Printf("Jenis Material  : %s\n", A[i].JenisMaterial)
+			fmt.Printf("Rating Performa : %.2f\n", A[i].RatingPerforma)
+			fmt.Printf("Kontak          : %s | %s\n", A[i].DetailKontak.Telepon, A[i].DetailKontak.Email)
+			fmt.Printf("Jumlah Riwayat  : %d\n", A[i].JumRiwayat)
+			for j := 0; j < A[i].JumRiwayat; j++ {
+				fmt.Printf("  - [%s] %s\n", A[i].RiwayatLayanan[j].Tanggal, A[i].RiwayatLayanan[j].Deskripsi)
+			}
+		}
+	}
+}
+
+func editSupplier(A *TabSupplier, n int) {
+	var target string
+	var idx int = -1
+
+	fmt.Print("Masukkan Nama Perusahaan yang ingin diedit: ")
+	fmt.Scan(&target)
+
+	for i := 0; i < n; i++ {
+		if A[i].NamaPerusahaan == target {
+			idx = i
+		}
+	}
+
+	if idx != -1 {
+		var pilihanEdit int
+		fmt.Println("1. Ubah Rating Performa")
+		fmt.Println("2. Tambah Riwayat Pelayanan")
+		fmt.Print("Pilih data yang ingin diedit (1/2): ")
+		fmt.Scan(&pilihanEdit)
+
+		if pilihanEdit == 1 {
+			fmt.Print("Masukkan Rating Baru: ")
+			fmt.Scan(&A[idx].RatingPerforma)
+			fmt.Println("Rating berhasil diubah!")
+		} else if pilihanEdit == 2 {
+			if A[idx].JumRiwayat < MAX_RIWAYAT {
+				riwayatKe := A[idx].JumRiwayat
+				fmt.Print("Masukkan Tanggal (DD-MM-YYYY): ")
+				fmt.Scan(&A[idx].RiwayatLayanan[riwayatKe].Tanggal)
+				fmt.Print("Masukkan Deskripsi Pelayanan : ")
+				fmt.Scan(&A[idx].RiwayatLayanan[riwayatKe].Deskripsi)
+				A[idx].JumRiwayat++
+				fmt.Println("Riwayat pelayanan berhasil ditambahkan!")
+			} else {
+				fmt.Println("Data riwayat pelayanan penuh!")
+			}
+		} else {
+			fmt.Println("Pilihan tidak valid.")
+		}
+	} else {
+		fmt.Println("Nama Perusahaan tidak ditemukan!")
+	}
+}
+
+func hapusSupplier(A *TabSupplier, n *int) {
+	var target string
+	var idx int = -1
+
+	fmt.Print("Masukkan Nama Perusahaan yang ingin dihapus: ")
+	fmt.Scan(&target)
+
+	for i := 0; i < *n; i++ {
+		if A[i].NamaPerusahaan == target {
+			idx = i
+		}
+	}
+
+	if idx != -1 {
+		for i := idx; i < *n-1; i++ {
+			A[i] = A[i+1]
+		}
+		*n = *n - 1
+		fmt.Println("Data berhasil dihapus!")
+	} else {
+		fmt.Println("Nama Perusahaan tidak ditemukan!")
+	}
+}
+
+func main() {
+	var dataMitra TabSupplier
+	var nData int = 0
+	var pilihan int
+	var jalan bool = true
+
+	for jalan {
+		fmt.Println("\n======================================================")
+		fmt.Println("         SISTEM INFORMASI BANGUNIN (LOGISTIK)         ")
+		fmt.Println("======================================================")
+		fmt.Println("[ FITUR PENGELOLAAN DATA ]")
+		fmt.Println("1. Tambah Data Supplier Baru")
+		fmt.Println("2. Tampilkan Seluruh Data Supplier")
+		fmt.Println("3. Ubah (Edit) Data Supplier")
+		fmt.Println("4. Hapus Data Supplier")
+		fmt.Println("\n[ FITUR PENCARIAN DATA ]")
+		fmt.Println("5. Cari Supplier berdasarkan Nama (Binary Search)")
+		fmt.Println("6. Cari Supplier berdasarkan Lokasi (Sequential Search)")
+		fmt.Println("\n[ FITUR PENGURUTAN DATA ]")
+		fmt.Println("7. Urutkan Supplier dari Rating Tertinggi (Selection Sort)")
+		fmt.Println("8. Urutkan Supplier dari Rating Terendah (Insertion Sort)")
+		fmt.Println("\n[ FITUR LAPORAN ]")
+		fmt.Println("9. Tampilkan Statistik")
+		fmt.Println("0. Keluar Aplikasi")
+		fmt.Println("======================================================")
+		fmt.Print("Pilih menu (0-9): ")
+		fmt.Scan(&pilihan)
+
+		switch pilihan {
+		case 1:
+			tambahSupplier(&dataMitra, &nData)
+		case 2:
+			tampilSemuaSupplier(dataMitra, nData)
+		case 3:
+			editSupplier(&dataMitra, nData)
+		case 4:
+			hapusSupplier(&dataMitra, &nData)
+		case 5:
+			fmt.Println(">> Fitur (Pencarian Nama) sedang dikerjakan Anggota 2.")
+		case 6:
+			fmt.Println(">> Fitur (Pencarian Lokasi) sedang dikerjakan Anggota 2.")
+		case 7:
+			fmt.Println(">> Fitur (Urut Rating Tertinggi) sedang dikerjakan Anggota 3.")
+		case 8:
+			fmt.Println(">> Fitur (Urut Rating Terendah) sedang dikerjakan Anggota 3.")
+		case 9:
+			fmt.Println(">> Fitur (Statistik) sedang dikerjakan Anggota 3.")
+		case 0:
+			fmt.Println("Terima kasih telah menggunakan aplikasi BangunIn!")
+			jalan = false
+		default:
+			fmt.Println("Pilihan tidak valid! Masukkan angka 0-9.")
+		}
+	}
+}
