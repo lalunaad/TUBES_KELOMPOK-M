@@ -220,9 +220,29 @@ func main() {
 		case 4:
 			hapusSupplier(&dataMitra, &nData)
 		case 5:
-			fmt.Println(">> Fitur (Pencarian Nama) sedang dikerjakan Anggota 2.")
+			var targetNama string
+			fmt.Print("Masukkan Nama Perusahaan yang dicari: ")
+			fmt.Scan(&targetNama)
+
+			idx := cariBerdasarkanNama(&dataMitra, nData, targetNama)
+
+			if idx != -1 {
+				fmt.Println("\n--- Data Ditemukan ---")
+				fmt.Printf("Nama Perusahaan : %s\n", dataMitra[idx].NamaPerusahaan)
+				fmt.Printf("Lokasi          : %s\n", dataMitra[idx].Lokasi)
+				fmt.Printf("Jenis Material  : %s\n", dataMitra[idx].JenisMaterial)
+				fmt.Printf("Rating Performa : %.2f\n", dataMitra[idx].RatingPerforma)
+				fmt.Printf("Kontak          : %s | %s\n", dataMitra[idx].DetailKontak.Telepon, dataMitra[idx].DetailKontak.Email)
+			} else {
+				fmt.Printf("\nSupplier dengan nama '%s' tidak ditemukan!\n", targetNama)
+			}
+
 		case 6:
-			fmt.Println(">> Fitur (Pencarian Lokasi) sedang dikerjakan Anggota 2.")
+			var targetLokasi string
+			fmt.Print("Masukkan Lokasi/Kota yang dicari: ")
+			fmt.Scan(&targetLokasi)
+
+			cariBerdasarkanLokasi(dataMitra, nData, targetLokasi)
 		case 7:
 			fmt.Println(">> Fitur (Urut Rating Tertinggi) sedang dikerjakan Anggota 3.")
 		case 8:
