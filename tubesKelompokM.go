@@ -29,17 +29,17 @@ type TabSupplier [NMAX]Supplier
 
 func tambahSupplier(A *TabSupplier, n *int) {
 	if *n < NMAX {
-		fmt.Print("Nama Perusahaan : ")
+		fmt.Print("Nama Perusahaan (Tanpa Spasi) : ")
 		fmt.Scan(&A[*n].NamaPerusahaan)
-		fmt.Print("Lokasi          : ")
+		fmt.Print("Lokasi/Kota (Tanpa Spasi)   : ")
 		fmt.Scan(&A[*n].Lokasi)
-		fmt.Print("Jenis Material  : ")
+		fmt.Print("Jenis Material (Tanpa Spasi): ")
 		fmt.Scan(&A[*n].JenisMaterial)
-		fmt.Print("Rating Performa : ")
+		fmt.Print("Rating Performa (0.0 - 5.0) : ")
 		fmt.Scan(&A[*n].RatingPerforma)
-		fmt.Print("No Telepon      : ")
+		fmt.Print("No Telepon                  : ")
 		fmt.Scan(&A[*n].DetailKontak.Telepon)
-		fmt.Print("Email           : ")
+		fmt.Print("Email                       : ")
 		fmt.Scan(&A[*n].DetailKontak.Email)
 		A[*n].JumRiwayat = 0
 		*n = *n + 1
@@ -83,7 +83,7 @@ func editSupplier(A *TabSupplier, n int) {
 
 	if idx != -1 {
 		var pilihanEdit int
-		fmt.Println("1. Ubah Rating Performa")
+		fmt.Println("\n1. Ubah Rating Performa")
 		fmt.Println("2. Tambah Riwayat Pelayanan")
 		fmt.Print("Pilih data yang ingin diedit (1/2): ")
 		fmt.Scan(&pilihanEdit)
@@ -97,7 +97,7 @@ func editSupplier(A *TabSupplier, n int) {
 				riwayatKe := A[idx].JumRiwayat
 				fmt.Print("Masukkan Tanggal (DD-MM-YYYY): ")
 				fmt.Scan(&A[idx].RiwayatLayanan[riwayatKe].Tanggal)
-				fmt.Print("Masukkan Deskripsi Pelayanan : ")
+				fmt.Print("Masukkan Deskripsi Pelayanan (Tanpa Spasi): ")
 				fmt.Scan(&A[idx].RiwayatLayanan[riwayatKe].Deskripsi)
 				A[idx].JumRiwayat++
 				fmt.Println("Riwayat pelayanan berhasil ditambahkan!")
@@ -136,8 +136,6 @@ func hapusSupplier(A *TabSupplier, n *int) {
 	}
 }
 
-
-// Fungsi Sequential Search (Mencari berdasarkan Lokasi)
 func cariBerdasarkanLokasi(A TabSupplier, n int, targetLokasi string) {
 	var i int
 	var ditemukan bool = false
@@ -148,7 +146,6 @@ func cariBerdasarkanLokasi(A TabSupplier, n int, targetLokasi string) {
 			fmt.Println("Nama Perusahaan :", A[i].NamaPerusahaan)
 			fmt.Println("Lokasi          :", A[i].Lokasi)
 			fmt.Println("Rating          :", A[i].RatingPerforma)
-			
 			ditemukan = true
 		}
 	}
@@ -158,10 +155,9 @@ func cariBerdasarkanLokasi(A TabSupplier, n int, targetLokasi string) {
 	}
 }
 
-// Fungsi Binary Search (Mencari berdasarkan Nama Perusahaan)
 func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
-	// PENTING: Panggil fungsi sorting milik Anggota 3 di sini!
-	// urutkanBerdasarkanNama(A, n) 
+	// PEMANGGILAN FUNGSI SORTING DIAKTIFKAN UNTUK BINARY SEARCH
+	urutkanBerdasarkanNama(A, n) 
 
 	var left int = 0
 	var right int = n - 1
@@ -182,11 +178,6 @@ func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
 	return -1
 }
 
-// =======================================================
-// KUMPULAN FUNGSI ANGGOTA 3 (SORTING & STATISTIK)
-// =======================================================
-
-// Fungsi 1 - Selection Sort (rating tertinggi ke terendah / Descending)
 func urutkanRatingTertinggi(A *TabSupplier, n int) {
 	var i, idxMax, j int
 	var temp Supplier
@@ -204,7 +195,6 @@ func urutkanRatingTertinggi(A *TabSupplier, n int) {
 	}
 }
 
-// Fungsi 2 - Insertion Sort (rating terendah ke tertinggi / Ascending)
 func urutkanRatingTerendah(A *TabSupplier, n int) {
 	var i, j int
 	var temp Supplier
@@ -220,7 +210,6 @@ func urutkanRatingTerendah(A *TabSupplier, n int) {
 	}
 }
 
-// Fungsi 3 - Mengurutkan nama perusahaan (A-Z) untuk syarat Binary Search
 func urutkanBerdasarkanNama(A *TabSupplier, n int) {
 	var i, j int
 	var temp Supplier
@@ -236,7 +225,6 @@ func urutkanBerdasarkanNama(A *TabSupplier, n int) {
 	}
 }
 
-// Fungsi 4 - Menghitung jumlah supplier berdasarkan wilayah
 func hitungSupplierPerWilayah(A TabSupplier, n int, targetWilayah string) int {
 	var i, jumlah int
 	jumlah = 0
@@ -248,7 +236,6 @@ func hitungSupplierPerWilayah(A TabSupplier, n int, targetWilayah string) int {
 	return jumlah
 }
 
-// Fungsi 5 - Menghitung rata-rata rating kepuasan
 func hitungRataRataKepuasan(A TabSupplier, n int) float64 {
 	var i int
 	var total float64
@@ -261,7 +248,6 @@ func hitungRataRataKepuasan(A TabSupplier, n int) float64 {
 	}
 	return total / float64(n)
 }
-
 
 func main() {
 	var dataMitra TabSupplier
@@ -322,18 +308,16 @@ func main() {
 			var targetLokasi string
 			fmt.Print("Masukkan Lokasi/Kota yang dicari: ")
 			fmt.Scan(&targetLokasi)
-
 			cariBerdasarkanLokasi(dataMitra, nData, targetLokasi)
+
 		case 7:
 			fmt.Println("\n>> Mengurutkan Data dari Rating Tertinggi...")
 			urutkanRatingTertinggi(&dataMitra, nData)
-			// Setelah diurutkan, panggil fungsi tampil milik Anggota 1 agar tabelnya terlihat
 			tampilSemuaSupplier(dataMitra, nData) 
 
 		case 8:
 			fmt.Println("\n>> Mengurutkan Data dari Rating Terendah...")
 			urutkanRatingTerendah(&dataMitra, nData)
-			// Sama, tampilkan datanya setelah diurutkan
 			tampilSemuaSupplier(dataMitra, nData)
 
 		case 9:
@@ -343,11 +327,9 @@ func main() {
 				var targetWilayah string
 				fmt.Println("\n--- LAPORAN STATISTIK ---")
 				
-				// Menampilkan rata-rata
 				rataRata := hitungRataRataKepuasan(dataMitra, nData)
 				fmt.Printf("1. Rata-rata Rating Kepuasan Keseluruhan : %.2f / 5.0\n", rataRata)
 
-				// Menghitung supplier di wilayah tertentu
 				fmt.Print("\nMasukkan Nama Wilayah/Kota untuk dicek : ")
 				fmt.Scan(&targetWilayah)
 				jumlahWilayah := hitungSupplierPerWilayah(dataMitra, nData, targetWilayah)
