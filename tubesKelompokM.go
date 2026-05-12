@@ -182,6 +182,87 @@ func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
 	return -1
 }
 
+// =======================================================
+// KUMPULAN FUNGSI ANGGOTA 3 (SORTING & STATISTIK)
+// =======================================================
+
+// Fungsi 1 - Selection Sort (rating tertinggi ke terendah / Descending)
+func urutkanRatingTertinggi(A *TabSupplier, n int) {
+	var i, idxMax, j int
+	var temp Supplier
+
+	for i = 0; i < n-1; i++ {
+		idxMax = i
+		for j = i + 1; j < n; j++ {
+			if A[j].RatingPerforma > A[idxMax].RatingPerforma {
+				idxMax = j
+			}
+		}
+		temp = A[i]
+		A[i] = A[idxMax]
+		A[idxMax] = temp
+	}
+}
+
+// Fungsi 2 - Insertion Sort (rating terendah ke tertinggi / Ascending)
+func urutkanRatingTerendah(A *TabSupplier, n int) {
+	var i, j int
+	var temp Supplier
+
+	for i = 1; i < n; i++ {
+		temp = A[i]
+		j = i - 1
+		for j >= 0 && A[j].RatingPerforma > temp.RatingPerforma {
+			A[j+1] = A[j]
+			j--
+		}
+		A[j+1] = temp
+	}
+}
+
+// Fungsi 3 - Mengurutkan nama perusahaan (A-Z) untuk syarat Binary Search
+func urutkanBerdasarkanNama(A *TabSupplier, n int) {
+	var i, j int
+	var temp Supplier
+
+	for i = 1; i < n; i++ {
+		temp = A[i]
+		j = i - 1
+		for j >= 0 && A[j].NamaPerusahaan > temp.NamaPerusahaan {
+			A[j+1] = A[j]
+			j--
+		}
+		A[j+1] = temp
+	}
+}
+
+// Fungsi 4 - Menghitung jumlah supplier berdasarkan wilayah
+func hitungSupplierPerWilayah(A TabSupplier, n int, targetWilayah string) int {
+	var i, jumlah int
+	jumlah = 0
+	for i = 0; i < n; i++ {
+		if A[i].Lokasi == targetWilayah {
+			jumlah++
+		}
+	}
+	return jumlah
+}
+
+// Fungsi 5 - Menghitung rata-rata rating kepuasan
+func hitungRataRataKepuasan(A TabSupplier, n int) float64 {
+	var i int
+	var total float64
+	total = 0
+	for i = 0; i < n; i++ {
+		total += A[i].RatingPerforma
+	}
+	if n == 0 {
+		return 0
+	}
+	return total / float64(n)
+}
+
+
 func main() {
 	var dataMitra TabSupplier
 	var nData int = 0
@@ -244,11 +325,34 @@ func main() {
 
 			cariBerdasarkanLokasi(dataMitra, nData, targetLokasi)
 		case 7:
-			fmt.Println(">> Fitur (Urut Rating Tertinggi) sedang dikerjakan Anggota 3.")
+			fmt.Println("\n>> Mengurutkan Data dari Rating Tertinggi...")
+			urutkanRatingTertinggi(&dataMitra, nData)
+			// Setelah diurutkan, panggil fungsi tampil milik Anggota 1 agar tabelnya terlihat
+			tampilSemuaSupplier(dataMitra, nData) 
+
 		case 8:
-			fmt.Println(">> Fitur (Urut Rating Terendah) sedang dikerjakan Anggota 3.")
+			fmt.Println("\n>> Mengurutkan Data dari Rating Terendah...")
+			urutkanRatingTerendah(&dataMitra, nData)
+			// Sama, tampilkan datanya setelah diurutkan
+			tampilSemuaSupplier(dataMitra, nData)
+
 		case 9:
-			fmt.Println(">> Fitur (Statistik) sedang dikerjakan Anggota 3.")
+			if nData == 0 {
+				fmt.Println("\nData supplier masih kosong, statistik tidak dapat dihitung.")
+			} else {
+				var targetWilayah string
+				fmt.Println("\n--- LAPORAN STATISTIK ---")
+				
+				// Menampilkan rata-rata
+				rataRata := hitungRataRataKepuasan(dataMitra, nData)
+				fmt.Printf("1. Rata-rata Rating Kepuasan Keseluruhan : %.2f / 5.0\n", rataRata)
+
+				// Menghitung supplier di wilayah tertentu
+				fmt.Print("\nMasukkan Nama Wilayah/Kota untuk dicek : ")
+				fmt.Scan(&targetWilayah)
+				jumlahWilayah := hitungSupplierPerWilayah(dataMitra, nData, targetWilayah)
+				fmt.Printf("2. Terdapat %d mitra supplier di wilayah %s.\n", jumlahWilayah, targetWilayah)
+			}
 		case 0:
 			fmt.Println("Terima kasih telah menggunakan aplikasi BangunIn!")
 			jalan = false
