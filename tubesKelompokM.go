@@ -83,16 +83,33 @@ func editSupplier(A *TabSupplier, n int) {
 
 	if idx != -1 {
 		var pilihanEdit int
-		fmt.Println("\n1. Ubah Rating Performa")
-		fmt.Println("2. Tambah Riwayat Pelayanan")
-		fmt.Print("Pilih data yang ingin diedit (1/2): ")
+		fmt.Println("\n--- MENU EDIT DATA ---")
+		fmt.Println("1. Ubah Nama Perusahaan")
+		fmt.Println("2. Ubah Lokasi")
+		fmt.Println("3. Ubah Jenis Material")
+		fmt.Println("4. Ubah Rating Performa")
+		fmt.Println("5. Tambah Riwayat Pelayanan")
+		fmt.Print("Pilih data yang ingin diedit (1-5): ")
 		fmt.Scan(&pilihanEdit)
 
-		if pilihanEdit == 1 {
+		switch pilihanEdit {
+		case 1:
+			fmt.Print("Masukkan Nama Perusahaan Baru (Tanpa Spasi): ")
+			fmt.Scan(&A[idx].NamaPerusahaan)
+			fmt.Println("Nama Perusahaan berhasil diubah!")
+		case 2:
+			fmt.Print("Masukkan Lokasi Baru (Tanpa Spasi): ")
+			fmt.Scan(&A[idx].Lokasi)
+			fmt.Println("Lokasi berhasil diubah!")
+		case 3:
+			fmt.Print("Masukkan Jenis Material Baru (Tanpa Spasi): ")
+			fmt.Scan(&A[idx].JenisMaterial)
+			fmt.Println("Jenis Material berhasil diubah!")
+		case 4:
 			fmt.Print("Masukkan Rating Baru: ")
 			fmt.Scan(&A[idx].RatingPerforma)
 			fmt.Println("Rating berhasil diubah!")
-		} else if pilihanEdit == 2 {
+		case 5:
 			if A[idx].JumRiwayat < MAX_RIWAYAT {
 				riwayatKe := A[idx].JumRiwayat
 				fmt.Print("Masukkan Tanggal (DD-MM-YYYY): ")
@@ -104,7 +121,7 @@ func editSupplier(A *TabSupplier, n int) {
 			} else {
 				fmt.Println("Data riwayat pelayanan penuh!")
 			}
-		} else {
+		default:
 			fmt.Println("Pilihan tidak valid.")
 		}
 	} else {
@@ -156,8 +173,7 @@ func cariBerdasarkanLokasi(A TabSupplier, n int, targetLokasi string) {
 }
 
 func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
-	// PEMANGGILAN FUNGSI SORTING DIAKTIFKAN UNTUK BINARY SEARCH
-	urutkanBerdasarkanNama(A, n) 
+	urutkanBerdasarkanNama(A, n)
 
 	var left int = 0
 	var right int = n - 1
@@ -178,33 +194,47 @@ func cariBerdasarkanNama(A *TabSupplier, n int, targetNama string) int {
 	return -1
 }
 
-func urutkanRatingTertinggi(A *TabSupplier, n int) {
-	var i, idxMax, j int
+func urutkanRatingSelection(A *TabSupplier, n int, ascending bool) {
+	var i, idxTarget, j int
 	var temp Supplier
 
 	for i = 0; i < n-1; i++ {
-		idxMax = i
+		idxTarget = i
 		for j = i + 1; j < n; j++ {
-			if A[j].RatingPerforma > A[idxMax].RatingPerforma {
-				idxMax = j
+			if ascending {
+				if A[j].RatingPerforma < A[idxTarget].RatingPerforma {
+					idxTarget = j
+				}
+			} else {
+				if A[j].RatingPerforma > A[idxTarget].RatingPerforma {
+					idxTarget = j
+				}
 			}
 		}
 		temp = A[i]
-		A[i] = A[idxMax]
-		A[idxMax] = temp
+		A[i] = A[idxTarget]
+		A[idxTarget] = temp
 	}
 }
 
-func urutkanRatingTerendah(A *TabSupplier, n int) {
+func urutkanRatingInsertion(A *TabSupplier, n int, ascending bool) {
 	var i, j int
 	var temp Supplier
 
 	for i = 1; i < n; i++ {
 		temp = A[i]
 		j = i - 1
-		for j >= 0 && A[j].RatingPerforma > temp.RatingPerforma {
-			A[j+1] = A[j]
-			j--
+		
+		if ascending {
+			for j >= 0 && A[j].RatingPerforma > temp.RatingPerforma {
+				A[j+1] = A[j]
+				j--
+			}
+		} else {
+			for j >= 0 && A[j].RatingPerforma < temp.RatingPerforma {
+				A[j+1] = A[j]
+				j--
+			}
 		}
 		A[j+1] = temp
 	}
@@ -268,8 +298,8 @@ func main() {
 		fmt.Println("5. Cari Supplier berdasarkan Nama (Binary Search)")
 		fmt.Println("6. Cari Supplier berdasarkan Lokasi (Sequential Search)")
 		fmt.Println("\n[ FITUR PENGURUTAN DATA ]")
-		fmt.Println("7. Urutkan Supplier dari Rating Tertinggi (Selection Sort)")
-		fmt.Println("8. Urutkan Supplier dari Rating Terendah (Insertion Sort)")
+		fmt.Println("7. Urutkan Supplier berdasar Rating (Selection Sort)")
+		fmt.Println("8. Urutkan Supplier berdasar Rating (Insertion Sort)")
 		fmt.Println("\n[ FITUR LAPORAN ]")
 		fmt.Println("9. Tampilkan Statistik")
 		fmt.Println("0. Keluar Aplikasi")
@@ -311,13 +341,41 @@ func main() {
 			cariBerdasarkanLokasi(dataMitra, nData, targetLokasi)
 
 		case 7:
-			fmt.Println("\n>> Mengurutkan Data dari Rating Tertinggi...")
-			urutkanRatingTertinggi(&dataMitra, nData)
-			tampilSemuaSupplier(dataMitra, nData) 
+			var urutan int
+			fmt.Println("\n>> SELECTION SORT (Berdasarkan Rating)")
+			fmt.Println("1. Ascending (Terendah ke Tertinggi)")
+			fmt.Println("2. Descending (Tertinggi ke Terendah)")
+			fmt.Print("Pilih urutan (1/2): ")
+			fmt.Scan(&urutan)
+
+			if urutan == 1 {
+				urutkanRatingSelection(&dataMitra, nData, true)
+				fmt.Println("\n[ Berhasil diurutkan secara Ascending ]")
+			} else if urutan == 2 {
+				urutkanRatingSelection(&dataMitra, nData, false)
+				fmt.Println("\n[ Berhasil diurutkan secara Descending ]")
+			} else {
+				fmt.Println("\nPilihan urutan tidak valid!")
+			}
+			tampilSemuaSupplier(dataMitra, nData)
 
 		case 8:
-			fmt.Println("\n>> Mengurutkan Data dari Rating Terendah...")
-			urutkanRatingTerendah(&dataMitra, nData)
+			var urutan int
+			fmt.Println("\n>> INSERTION SORT (Berdasarkan Rating)")
+			fmt.Println("1. Ascending (Terendah ke Tertinggi)")
+			fmt.Println("2. Descending (Tertinggi ke Terendah)")
+			fmt.Print("Pilih urutan (1/2): ")
+			fmt.Scan(&urutan)
+
+			if urutan == 1 {
+				urutkanRatingInsertion(&dataMitra, nData, true)
+				fmt.Println("\n[ Berhasil diurutkan secara Ascending ]")
+			} else if urutan == 2 {
+				urutkanRatingInsertion(&dataMitra, nData, false)
+				fmt.Println("\n[ Berhasil diurutkan secara Descending ]")
+			} else {
+				fmt.Println("\nPilihan urutan tidak valid!")
+			}
 			tampilSemuaSupplier(dataMitra, nData)
 
 		case 9:
@@ -326,7 +384,7 @@ func main() {
 			} else {
 				var targetWilayah string
 				fmt.Println("\n--- LAPORAN STATISTIK ---")
-				
+
 				rataRata := hitungRataRataKepuasan(dataMitra, nData)
 				fmt.Printf("1. Rata-rata Rating Kepuasan Keseluruhan : %.2f / 5.0\n", rataRata)
 
